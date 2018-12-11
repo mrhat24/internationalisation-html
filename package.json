@@ -1,0 +1,21 @@
+{
+  "name": "translate-lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "translation.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "test": "jest"
+  },
+  "author": "mrhat24",
+  "license": "MIT",
+  "dependencies": {
+    "@types/jest": "^23.3.10",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "ts-loader": "^5.3.1",
+    "typescript": "^3.2.2",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2"
+  }
+}
