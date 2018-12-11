@@ -197,16 +197,13 @@ export class Translator {
                 }
                 this.setTranslatedNodes(value);
             } else if (value.nodeType === 3) {
-                console.log(value.nodeValue);
                 let texts = Translator.getTextForTranslate(value, this.defaultRegex);
-                console.log('texts', texts);
                 for (let item of texts) {
                     this.translatedNodes.push({
                         ...item,
                         type: 'text',
                         node: value
                     });
-                    console.log('push item', value);
                 }
             }
         });
@@ -217,7 +214,6 @@ export class Translator {
         let newRegex = new RegExp(regex, 'g');
         let rr;
         let text = element.nodeValue;
-        console.log(element);
         while ((rr = newRegex.exec(text)) !== null) {
             result.push({
                 defaultValue: rr[0],
@@ -251,14 +247,12 @@ export class Translator {
 
     public static translateText(node: Node, dictionary: Dictionary, regex: RegExp) {
         node.nodeValue = Translator.translate(node.nodeValue, dictionary, regex);
-        console.log('new text value', node.nodeValue);
     }
 
     public static translateAttributes(attributes: NamedNodeMap, dictionary: Dictionary, regex: RegExp) {
         let keys = Object.keys(attributes);
         for (let key of keys) {
             attributes[key].value = Translator.translate(attributes[key].value, dictionary, regex);
-            console.log('new attribute value', attributes[key].value);
         }
     }
 
