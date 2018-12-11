@@ -5,8 +5,12 @@
     <title>Title</title>
 </head>
 <body id="translation">
-<div translate>!#test#!</div>
-<input type="text" translateattribute data-attr="placeholder" placeholder="!#TEST_TRANSLATE_PLACEHOLDER#!">
+<div>!#test#!<div>!#test#!</div><div>!#test#!</div>
+</div>
+<div>!#test#!</div>
+
+<input type="text" placeholder="!#TEST_TRANSLATE_PLACEHOLDER#!">
+<input type="text" placeholder="!#TEST_TRANSLATE_PLACEHOLDER#!">
 <script type="text/javascript" src="dist/translator.bundle.js"></script>
 <script type="text/javascript">
     let t = new Translator(document.querySelector('#translation'), 'ru', {ru: {test: 'testing', "TEST_TRANSLATE_PLACEHOLDER": '+7999'}});
