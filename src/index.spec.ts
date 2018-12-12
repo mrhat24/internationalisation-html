@@ -28,15 +28,17 @@ describe("test translator functions", function () {
 
     it('change translate after few seconds', function (done) {
         const parent = document.createElement('div');
-        parent.innerHTML = `<div id="child" alt="!#test#!" translateattribute data-attr="alt">tt</div>`;
-        let t = new Translator(parent, 'ru', {ru: {test: 'ru translate'}, en: {test: 'eng translate'}});
-        expect(parent.querySelector('#child').getAttribute('alt')).toEqual('ru translate');
+        parent.innerHTML = `<div id="child" alt="!#test#!">tt</div>`;
+        let t = new Translator(parent, 'ru', {ru: {test: 'rutranslate'}, en: {test: 'engtranslate'}});
+        expect(parent.querySelector('#child').getAttribute('alt')).toEqual('rutranslate');
         setTimeout(() => {
+            console.log(parent.querySelector('#child').getAttribute('alt'));
             t.translateNodes('en');
+            console.log(parent.querySelector('#child').getAttribute('alt'));
         }, 100);
         setTimeout(() => {
-            expect(parent.querySelector('#child').getAttribute('alt')).not.toEqual('ru translate');
-            expect(parent.querySelector('#child').getAttribute('alt')).toEqual('eng translate');
+            expect(parent.querySelector('#child').getAttribute('alt')).not.toEqual('rutranslate');
+            expect(parent.querySelector('#child').getAttribute('alt')).toEqual('engtranslate');
             done();
         }, 1000);
     });
@@ -67,9 +69,10 @@ describe("test translator functions", function () {
 
     it('getTextForTranslate testing', function () {
         const element = document.createElement('div');
-        element.innerHTML = "!#test#!, !#test2#!";
-        let result = Translator.getTextForTranslate(element,  /!#(\w+)#!/);
-        expect(result.length).toEqual(2);
+        element.innerHTML = "<div id='child'>!#test#!</div>";
+        const child = element.querySelector('#child');
+        let result = Translator.getTextForTranslate(child.childNodes[0],  /!#(\w+).?(\w+)?#!/);
+        expect(result.length).toEqual(1);
     });
 
 

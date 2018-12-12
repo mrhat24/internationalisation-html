@@ -97,12 +97,14 @@ export class Translator {
     }
 
     public translateNodes(lang = this.language) {
-        //this.resetNodes();
+        this.resetNodes();
         let dictionary = this.dictionaries[lang];
         this.translatedNodes.map(item => {
-            console.log(item.node.nodeValue);
             if (item.type == 'attribute') {
-                item.node.setAttribute(item.attributeName, replaceAt(item.node.getAttribute(item.attributeName), item.defaultValue, dictionary[item.key], item.index));
+                item.node.getAttribute(item.attributeName);
+                let newAttrValue = replaceAt(item.defaultValue, item.defaultValue, dictionary[item.key], item.index);
+                item.node.setAttribute(item.attributeName, newAttrValue);
+                item.node.getAttribute(item.attributeName);
             } else if (item.type == 'text') {
                 if (item.pipe) {
                     let div = document.createElement('span');
@@ -178,6 +180,7 @@ export class Translator {
         let rr;
         let text = element.nodeValue;
         while ((rr = newRegex.exec(text)) !== null) {
+            console.log(rr);
             result.push({
                 defaultValue: rr[0],
                 index: rr.index,
