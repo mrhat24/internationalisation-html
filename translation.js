@@ -42,7 +42,6 @@ var Translation = function (element, language, dictionaries) {
         var result;
         while((result = regex.exec(mutableText)) !== null) {
             if (dictionary[result[1]] !== undefined) {
-                console.log(result);
                 orgText = replaceAt(mutableText, result[0], dictionary[result[1]], result.index);
             }
         }
