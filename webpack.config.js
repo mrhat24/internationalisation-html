@@ -23,6 +23,9 @@ module.exports = function () {
                 }
             ]
         },
-        target: "web"
+        target: "web",
+        optimization: {
+            minimize: true
+        }
     }
 };

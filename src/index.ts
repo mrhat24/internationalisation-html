@@ -1,3 +1,39 @@
+if (Element.prototype.getAttributeNames == undefined) {
+    Element.prototype.getAttributeNames = function () {
+        var attributes = this.attributes;
+        var length = attributes.length;
+        var result = new Array(length);
+        for (var i = 0; i < length; i++) {
+            result[i] = attributes[i].name;
+        }
+        return result;
+    };
+}
+
+(function (arr) {
+    arr.forEach(function (item) {
+        if (item.hasOwnProperty('after')) {
+            return;
+        }
+        Object.defineProperty(item, 'after', {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: function after() {
+                var argArr = Array.prototype.slice.call(arguments),
+                    docFrag = document.createDocumentFragment();
+
+                argArr.forEach(function (argItem) {
+                    var isNode = argItem instanceof Node;
+                    docFrag.appendChild(isNode ? argItem : document.createTextNode(String(argItem)));
+                });
+
+                this.parentNode.insertBefore(docFrag, this.nextSibling);
+            }
+        });
+    });
+})([Element.prototype, CharacterData.prototype, DocumentType.prototype]);
+
 export interface Dictionary {
     [key: string]: string;
 }
@@ -24,8 +60,11 @@ export class Translator {
         public element: HTMLElement,
         public language: string,
         public dictionaries: Dictionaries,
-        public defaultRegex: RegExp = /!#(\w+).?(\w+)?#!/
+        public defaultRegex: RegExp = null
     ) {
+        if (this.defaultRegex == null) {
+            this.defaultRegex = /!#(\w+).?(\w+)?#!/;
+        }
         // this._translationElements = element.querySelectorAll<HTMLElement>('[translate]');
         // this._translationAttributes = element.querySelectorAll<HTMLElement>('[translateattribute]');
         // this.setArrays();
@@ -86,14 +125,15 @@ export class Translator {
 
 
     public static handleChildNodes(node: Node, dictionary: Dictionary, regex: RegExp) {
-        node.childNodes.forEach((value: HTMLInputElement) => {
+        for (let i = 0; i < node.childNodes.length; i++) {
+            let value:HTMLInputElement = node.childNodes[i] as HTMLInputElement;
             if (value.nodeType === 1) {
                 Translator.handleChildNodes(value, dictionary, regex);
                 Translator.translateAttributes(value.attributes, dictionary, regex);
             } else if (value.nodeType === 3) {
                 Translator.translateText(value, dictionary, regex);
             }
-        });
+        }
     }
 
     public translateNodes(lang = this.language) {
@@ -146,10 +186,10 @@ export class Translator {
     }
 
     public setTranslatedNodes(parent: HTMLElement) {
-        parent.childNodes.forEach((value: any) => {
+        for (let i = 0; i < parent.childNodes.length; i++) {
+            let value:HTMLInputElement = parent.childNodes[i] as HTMLInputElement;
             if (value.nodeType === 1) {
                 let a = value.nodeType;
-                let names = value.getAttributeNames();
 
                 let attrs = Translator.getAttrsForTranslate(value, this.defaultRegex);
 
@@ -171,16 +211,15 @@ export class Translator {
                     });
                 }
             }
-        });
+        }
     }
 
     public static getTextForTranslate(element: Node, regex: RegExp): {defaultValue: string, index: number, key: string, pipe: string}[] {
         let result = [];
-        let newRegex = new RegExp(regex, 'g');
         let rr;
         let text = element.nodeValue;
-        while ((rr = newRegex.exec(text)) !== null) {
-            console.log(rr);
+
+        if ((rr = text.match(regex)) !== null) {
             result.push({
                 defaultValue: rr[0],
                 index: rr.index,
@@ -195,11 +234,10 @@ export class Translator {
         let result = [];
         let keys = element.getAttributeNames();
         let i = 0;
-        let newRegex = new RegExp(regex, 'g');
         for (let key of keys) {
             let rr;
             let attrValue = element.getAttribute(key);
-            while ((rr = newRegex.exec(attrValue)) !== null) {
+            if ((rr = attrValue.match(regex)) !== null) {
                 result.push({
                     defaultValue: rr[0],
                     index: rr.index,
@@ -238,8 +276,7 @@ export class Translator {
         let mutableText = text;
         let orgText = text;
         let result;
-        let newRegex = new RegExp(regex, 'g');
-        while((result = newRegex.exec(mutableText)) !== null) {
+        if((result = mutableText.match(regex)) !== null) {
             if (dictionary[result[1]] !== undefined) {
                 orgText = replaceAt(orgText, result[0], dictionary[result[1]], result.index);
             }
